@@ -4,23 +4,29 @@ using UnityEngine;
 
 public class CursorControl : MonoBehaviour
 {
-    private Rigidbody rb;
     public GameObject globalCursor;
-    public GameObject menu;
+    private Rigidbody rb;
+    private MenuSelection menuSelection;
+    private StateManager stateManager;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        menuSelection = GameObject.Find("UI").GetComponent<MenuSelection>();
+        stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
     }
     void FixedUpdate()
     {
-        if (Vector3.Distance(globalCursor.transform.position, menu.transform.position) < menu.transform.localScale.x * 0.04f)
+        if (stateManager.currentState == StateManager.State.UI)
         {
-            this.transform.position = globalCursor.transform.position;
-            Debug.Log("Tracking");
+            if (Vector3.Distance(globalCursor.transform.position, menuSelection.selectedMenu.transform.position) < menuSelection.selectedMenu.transform.localScale.x * 0.04f)
+            {
+                this.transform.position = globalCursor.transform.position;
+            }
+            else
+            {
+                rb.velocity = (globalCursor.transform.position - this.transform.position) / Time.deltaTime * 1.0f;
+            }            
         }
-        else
-        {
-            rb.velocity = (globalCursor.transform.position - this.transform.position) / Time.deltaTime * 1.0f;
-        }
+
     }
 }

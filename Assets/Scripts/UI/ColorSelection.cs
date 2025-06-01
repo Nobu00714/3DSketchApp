@@ -4,29 +4,41 @@ using UnityEngine;
 
 public class ColorSelection : MonoBehaviour
 {
-    [SerializeField] private StateManager stateManager;
     [SerializeField] private GameObject cursor;
     [SerializeField] private int menuNum = 16;
-    public int selectNum;
-    public Color32[] itemColors;
+    private LineDrawer lineDrawer;
+    private StateManager stateManager;
+    private int selectNum;
     private bool firstRelease;
-    public LineDrawer lineDrawer;
+    public GameObject penSizeAndColor;
+    [SerializeField] private SmartColorPalette smartColorPalette;
+    private ColorPalette colorPalette;
+    void Start()
+    {
+        stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
+        lineDrawer = GameObject.Find("LineDrawer").GetComponent<LineDrawer>();
+        colorPalette = this.GetComponent<ColorPalette>();
+    }
     void Update()
     {
-        if(stateManager.currentState == StateManager.State.UI)
+        if (stateManager.currentState == StateManager.State.UI)
         {
-            if(cursor.activeSelf)
+            if (cursor.activeSelf)
             {
                 selectNum = getSelect();
                 firstRelease = true;
             }
             else
             {
-                if(firstRelease)
+                if (firstRelease)
                 {
                     selectNum = getSelect();
-                    lineDrawer.lineColor = itemColors[selectNum];
+                    lineDrawer.lineColor = colorPalette.itemColors[selectNum];
+                    penSizeAndColor.GetComponent<Renderer>().material.color = colorPalette.itemColors[selectNum];
                     firstRelease = false;
+                    // 選択音を鳴らす
+                    this.GetComponent<SelectSound>().PlaySelectSound();
+                    this.GetComponent<ColorSelection>().enabled = false;
                 }
             }
         }

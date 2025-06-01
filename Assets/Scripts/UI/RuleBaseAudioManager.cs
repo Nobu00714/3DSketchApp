@@ -13,8 +13,13 @@ public class RuleBaseAudioManager : MonoBehaviour
     private int penetrateArea;
     private float nowAngle;
     private float previousAngle;
+    public bool audioTF = false;
     void Update()
     {
+        if(audioTF == false)
+        {
+            return;
+        }
         nowDistance = Vector3.Distance(globalCursor.transform.position, menuSelection.selectedMenu.transform.position);
         nowAngle = Vector3.SignedAngle(menuSelection.selectedMenu.transform.up, globalCursor.transform.position - menuSelection.selectedMenu.transform.position, -menuSelection.selectedMenu.transform.forward);
         if (nowAngle >= 360f)

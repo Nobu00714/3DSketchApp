@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
 {
     public StateManager stateManager;
     public GameObject[] activateUI;
+    public GameObject[] menuUI;
     void Update()
     {
         if(stateManager.currentState == StateManager.State.UI)

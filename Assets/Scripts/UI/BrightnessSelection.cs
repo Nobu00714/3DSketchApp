@@ -13,6 +13,8 @@ public class BrightnessSelection : MonoBehaviour
     public GameObject penSizeAndColor;
     [SerializeField] private SmartColorPalette smartColorPalette;
     private ColorPalette colorPalette;
+    [SerializeField] private GameObject[] pieVisuals;
+    [SerializeField] private Color32 defaultColor;
     void Start()
     {
         stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
@@ -21,11 +23,26 @@ public class BrightnessSelection : MonoBehaviour
     }
     void Update()
     {
-        if (stateManager.currentState == StateManager.State.UI)
+        if (stateManager.currentState == StateManager.State.BumpUI || stateManager.currentState == StateManager.State.PieUI)
         {
             if (cursor.activeSelf)
             {
                 selectNum = getSelect();
+                //PieMenuのときは、VisualFeedback
+                if (stateManager.currentState == StateManager.State.PieUI)
+                {
+                    for (int i = 0; i < pieVisuals.Length; i++)
+                    {
+                        if (i == selectNum)
+                        {
+                            pieVisuals[i].GetComponent<Renderer>().material.color = Color.red;
+                        }
+                        else
+                        {
+                            pieVisuals[i].GetComponent<Renderer>().material.color = Color.white;
+                        }
+                    }
+                }
                 firstRelease = true;
             }
             else
@@ -36,9 +53,20 @@ public class BrightnessSelection : MonoBehaviour
                     lineDrawer.lineColor = colorPalette.itemColors[selectNum];
                     penSizeAndColor.GetComponent<Renderer>().material.color = colorPalette.itemColors[selectNum];
                     smartColorPalette.GetHueCircleColors(colorPalette.itemColors[selectNum]);
-                    firstRelease = false;
                     // 選択音を鳴らす
                     this.GetComponent<SelectSound>().PlaySelectSound();
+                    // PieVisualFeedbackの初期化
+                    if (stateManager.currentState == StateManager.State.PieUI)
+                    {
+                        if (pieVisuals.Length > 0)
+                        {
+                            for (int i = 0; i < pieVisuals.Length; i++)
+                            {
+                                pieVisuals[i].GetComponent<Renderer>().material.color = defaultColor;
+                            }
+                        }
+                    }
+                    firstRelease = false;                    
                     this.GetComponent<BrightnessSelection>().enabled = false;
                 }
             }

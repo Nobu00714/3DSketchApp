@@ -16,16 +16,23 @@ public class CursorControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (stateManager.currentState == StateManager.State.UI)
+        if (stateManager.currentState == StateManager.State.BumpUI || stateManager.currentState == StateManager.State.PieUI)
         {
-            if (Vector3.Distance(globalCursor.transform.position, menuSelection.selectedMenu.transform.position) < menuSelection.selectedMenu.transform.localScale.x * 0.04f)
+            if (menuSelection.selectedMenu == null)
             {
-                this.transform.position = globalCursor.transform.position;
+                return; // 選択されていない場合は何もしない
             }
             else
             {
-                rb.velocity = (globalCursor.transform.position - this.transform.position) / Time.deltaTime * 1.0f;
-            }            
+                if (Vector3.Distance(globalCursor.transform.position, menuSelection.selectedMenu.transform.position) < menuSelection.selectedMenu.transform.localScale.x * 0.04f)
+                {
+                    this.transform.position = globalCursor.transform.position;
+                }
+                else
+                {
+                    rb.velocity = (globalCursor.transform.position - this.transform.position) / Time.deltaTime * 1.0f;
+                }    
+            }
         }
 
     }

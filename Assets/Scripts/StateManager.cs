@@ -6,13 +6,18 @@ public class StateManager : MonoBehaviour
 {
     public enum State
     {
-        UI,
+        BumpUI,
+        PieUI,
         Draw
     }
     public State currentState;
-    public void stateUI()
+    public void stateBumpUI()
     {
-        currentState = State.UI;
+        currentState = State.BumpUI;
+    }
+    public void statePieUI()
+    {
+        currentState = State.PieUI;
     }
     public void stateDraw()
     {

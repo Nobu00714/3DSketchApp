@@ -12,6 +12,8 @@ public class WidthSelection : MonoBehaviour
     private int selectNum;
     private bool firstRelease;
     public GameObject penSizeAndColor;
+    [SerializeField] private GameObject[] pieVisuals;
+    [SerializeField] private Color32 defaultColor;
     void Start()
     {
         stateManager = GameObject.Find("StateManager").GetComponent<StateManager>();
@@ -19,11 +21,26 @@ public class WidthSelection : MonoBehaviour
     }
     void Update()
     {
-        if(stateManager.currentState == StateManager.State.UI)
+        if (stateManager.currentState == StateManager.State.BumpUI || stateManager.currentState == StateManager.State.PieUI)
         {
             if(cursor.activeSelf)
             {
                 selectNum = getSelect();
+                //PieMenuのときは、VisualFeedback
+                if (stateManager.currentState == StateManager.State.PieUI)
+                {
+                    for (int i = 0; i < pieVisuals.Length; i++)
+                    {
+                        if (i == selectNum)
+                        {
+                            pieVisuals[i].GetComponent<Renderer>().material.color = Color.red;
+                        }
+                        else
+                        {
+                            pieVisuals[i].GetComponent<Renderer>().material.color = Color.white;
+                        }
+                    }
+                }
                 firstRelease = true;
             }
             else
@@ -33,6 +50,19 @@ public class WidthSelection : MonoBehaviour
                     selectNum = getSelect();
                     lineDrawer.lineWidth = penWidths[selectNum] * 0.01f;
                     penSizeAndColor.transform.localScale = new Vector3(penWidths[selectNum] * 0.01f, penWidths[selectNum] * 0.01f, penWidths[selectNum] * 0.001f);
+                    // 選択音を鳴らす
+                    this.GetComponent<SelectSound>().PlaySelectSound();
+                    // PieVisualFeedbackの初期化
+                    if (stateManager.currentState == StateManager.State.PieUI)
+                    {
+                        if (pieVisuals.Length > 0)
+                        {
+                            for (int i = 0; i < pieVisuals.Length; i++)
+                            {
+                                pieVisuals[i].GetComponent<Renderer>().material.color = defaultColor;
+                            }
+                        }
+                    }
                     firstRelease = false;
                     this.GetComponent<WidthSelection>().enabled = false;
                 }
@@ -41,7 +71,7 @@ public class WidthSelection : MonoBehaviour
     }
     private int getSelect()
     {
-        float angle = Vector3.SignedAngle(this.transform.up, cursor.transform.position - this.transform.position, -this.transform.forward);
+        float angle = Vector3.SignedAngle(this.transform.up, cursor.transform.position - this.transform.position, -this.transform.forward) - this.transform.eulerAngles.z;
         if(angle>=360f)
         {
             angle -= 360f;

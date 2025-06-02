@@ -5,16 +5,26 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public StateManager stateManager;
-    public GameObject[] activateUI;
-    public GameObject[] menuUI;
+    public GameObject[] activateBumpUI;
+    public GameObject[] activatePieUI;
+    public GameObject[] bumpMenuUI;
+    public GameObject[] pieMenuUI;
     void Update()
     {
-        if(stateManager.currentState == StateManager.State.UI)
+        if(stateManager.currentState == StateManager.State.BumpUI)
         {
             // Activate UI elements
-            for(int i = 0; i < activateUI.Length; i++)
+            for(int i = 0; i < activateBumpUI.Length; i++)
             {
-                activateUI[i].SetActive(true);
+                activateBumpUI[i].SetActive(true);
+            }
+        }
+        else if(stateManager.currentState == StateManager.State.PieUI)
+        {
+            // Activate UI elements
+            for(int i = 0; i < activatePieUI.Length; i++)
+            {
+                activatePieUI[i].SetActive(true);
             }
         }
         else
